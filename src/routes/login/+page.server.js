@@ -1,4 +1,6 @@
 import { client as rdb } from '$lib/redis';
+import { redirect } from '@sveltejs/kit';
+
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
@@ -7,11 +9,9 @@ const saltRounds = 10;
 
 export async function load({ locals }) {
 	const isLogin = locals.session.data && locals.session.data.uuid;
-	return {
-		status: 200,
-		redirect: '/home',
-		isLogin
-	};
+	if (isLogin) {
+		throw redirect('307', '/');
+	}
 }
 
 export async function POST({ locals, request }) {
