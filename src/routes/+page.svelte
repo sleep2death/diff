@@ -1,10 +1,13 @@
 <script>
+	import Header from '$lib/components/header.svelte';
+
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { Circle3 } from 'svelte-loading-spinners';
 
-	export let data;
+	export let errors;
 
-	let img_src = '';
+	let img_src = '/images/dummy_512x512.png';
 	let ready = false;
 	let task;
 
@@ -20,7 +23,7 @@
 			ready = task.status === 'Done';
 
 			if (ready) {
-				console.log('job done');
+				console.log('task done:', task);
 				clearInterval(inter);
 				img_src = '/outputs/' + task.img_id + '.jpg';
 			}
@@ -35,6 +38,7 @@
 		'illustration print of pug head sculpture, super detailed, by dan mumford, by aaron horkey, high contrast, low poly style';
 </script>
 
+<Header />
 <div class="min-h-screen w-full hero">
 	<div class="hero-content text-center flex flex-col w-full">
 		<div class="max-w-md">
@@ -44,8 +48,11 @@
 			</h1>
 		</div>
 		{#if task}
-			<div class="md:max-w-lg" class:hidden={!ready}>
+			<div class="md:max-w-lg">
 				<div class="border border-slate-400 p-2 rounded-lg">
+					<div class:hidden={ready} class="absolute">
+						<Circle3 size="36" unit="px" duration="2s" />
+					</div>
 					<img class="w-full h-full" src={img_src} alt="task result" />
 				</div>
 				<a
@@ -66,8 +73,12 @@
 				<input
 					type="submit"
 					value="dream"
+					name="dream"
 					class="mt-4 btn border-none w-full md:w-1/2 bg-green-600 hover:bg-green-800 font-semibold text-white"
 				/>
+				{#if errors}
+					<label class="w-full text-sm text-red-400" for="dream">{errors.msg}</label>
+				{/if}
 			</form>
 		{/if}
 	</div>
